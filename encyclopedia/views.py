@@ -1,9 +1,34 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 import markdown2
+from django import forms
 
 from . import util
 
+from django.shortcuts import redirect
+
+def search_redirect(request):
+    search_term = request.GET.get('q', '')
+    x = util.get_entry(search_term)
+    
+    if x is None: 
+        #it was mentioned in the specifiacation of the project that if there is no such entry, when searched for....
+        # then display a list of all encyclopedia entries that have the query as a substring.
+        # BUT when that same substring is visited using /wiki/TITLE in the URL section,  then there just should be a single messege of entry not found.
+        #so two code for both cases are written separately
+        articles = util.list_entries()
+        possible_results = []
+        
+        for article in articles:
+            if search_term in article.lower():
+                possible_results.append(article)
+        
+        return render(request, "encyclopedia/querynotfound.html", {  
+            'search_term': search_term.capitalize(),
+            'possible_results': possible_results
+        })
+    else:
+        return redirect('entry', search_term.lower())
 
 def index(request):
     return render(request, "encyclopedia/index.html", {

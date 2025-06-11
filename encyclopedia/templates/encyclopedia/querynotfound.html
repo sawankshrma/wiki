@@ -1,0 +1,19 @@
+{% extends "encyclopedia/layout.html" %}
+
+{% block title %}
+    Article Not Found!
+{% endblock %}
+
+{% block body %}
+   
+   <h1>No articles named  {{ search_term }}</h1>
+   {% if possible_results %}
+        <h4>Wanted searching for...?</h4>
+        <ul>
+        {% for article in possible_results %}
+                <li><a class="list" href="{% url 'entry' article %}">{{ article }}</a></li>
+                {% endfor %}
+                </ul>
+    {% endif %}
+
+{% endblock %}
