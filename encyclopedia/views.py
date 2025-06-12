@@ -1,11 +1,36 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponseRedirect
 import markdown2
 from django import forms
+from django.urls import reverse
 
 from . import util
 
 from django.shortcuts import redirect
+
+class NewTaskForm(forms.Form):
+    title = forms.CharField(label="Title:")
+    content = forms.CharField(label="Content:", widget=forms.Textarea)
+
+
+def add(request):
+    if request.method == "POST":
+        form1 = NewTaskForm(request.POST)
+
+        if form1.is_valid():
+            title = form1.cleaned_data["title"]
+            content = form1.cleaned_data["content"]
+            util.save_entry(title, content)
+            return HttpResponseRedirect(reverse("entry", kwargs={"title": title}))
+        else:
+            return render(request, "encyclopedia/newPage.html", {
+                "form1": form1
+            })
+
+    return render(request, "encyclopedia/newPage.html", {
+        "form1": NewTaskForm()
+    })
+
 
 def search_redirect(request):
     search_term = request.GET.get('q', '')
