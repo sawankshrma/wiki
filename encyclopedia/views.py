@@ -3,6 +3,7 @@ from django.http import HttpResponseRedirect
 import markdown2
 from django import forms
 from django.urls import reverse
+import random
 
 from . import util
 
@@ -11,6 +12,18 @@ from django.shortcuts import redirect
 class NewTaskForm(forms.Form):
     title = forms.CharField(label="Title:")
     content = forms.CharField(label="Content:", widget=forms.Textarea)
+
+def random_entry(request):
+    all = util.list_entries()
+    if not all:
+        return redirect('index') 
+    
+    rndm = random.choice(all)
+    return redirect('entry', rndm.lower())  
+
+
+
+
 
 def change(request, title):
     if request.method == "POST":
@@ -55,6 +68,7 @@ def add(request):
 
 def search_redirect(request):
     search_term = request.GET.get('q', '')
+    search_term= search_term.lower()
     x = util.get_entry(search_term)
     
     if x is None: 
