@@ -6,6 +6,7 @@ urlpatterns = [
     path("", views.index, name="index"),
     path("wiki/<str:title>", views.entry, name="entry"),
     path("search/", views.search_redirect, name="search"),  # For form submission
-    path("newpage/", views.add, name="add")
+    path("newpage/", views.add, name="add"),
+    path("change/<str:title>", views.change, name="change")
 ]
 

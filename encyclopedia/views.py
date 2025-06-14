@@ -12,6 +12,27 @@ class NewTaskForm(forms.Form):
     title = forms.CharField(label="Title:")
     content = forms.CharField(label="Content:", widget=forms.Textarea)
 
+def change(request, title):
+    if request.method == "POST":
+        form2 = NewTaskForm(request.POST)
+
+        if form2.is_valid():
+            title = form2.cleaned_data["title"]
+            content = form2.cleaned_data["content"]
+            util.save_entry(title, content)
+            return HttpResponseRedirect(reverse("entry", kwargs={"title": title}))
+        else:
+            return render(request, "encyclopedia/changeentry.html", {
+                "form2": form2, 
+                "title": title.capitalize()
+            })
+
+    contenttoedit= util.get_entry(title)
+    return render(request, "encyclopedia/changeentry.html", {
+        "form2": NewTaskForm(initial={'title': title, 'content': contenttoedit}),
+        "title": title.capitalize()
+    })
+
 
 def add(request):
     if request.method == "POST":

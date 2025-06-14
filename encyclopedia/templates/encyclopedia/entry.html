@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block body %}
-   
-   {{ html_content|safe }}
+   <a href="{% url 'change' title %}">Modify this article</a>
+   {{ html_content|safe }} 
 
 {% endblock %}
