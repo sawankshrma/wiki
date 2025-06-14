@@ -25,13 +25,19 @@ def save_entry(title, content):
     default_storage.save(filename, ContentFile(content))
 
 
+
+
 def get_entry(title):
     """
-    Retrieves an encyclopedia entry by its title. If no such
-    entry exists, the function returns None.
+    Retrieves an encyclopedia entry by its title (case-insensitive).
+    If no such entry exists, returns None.
     """
     try:
-        f = default_storage.open(f"entries/{title}.md")
-        return f.read().decode("utf-8")
+        # List all entry filenames in the 'entries/' directory
+        for filename in default_storage.listdir("entries")[1]:  # [1] gives files only
+            if filename.lower() == f"{title.lower()}.md":
+                f = default_storage.open(f"entries/{filename}")
+                return f.read().decode("utf-8")
+        return None
     except FileNotFoundError:
         return None

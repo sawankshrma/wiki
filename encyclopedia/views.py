@@ -4,14 +4,12 @@ import markdown2
 from django import forms
 from django.urls import reverse
 import random
-
 from . import util
-
 from django.shortcuts import redirect
 
-class NewTaskForm(forms.Form):
+class NewArticleForm(forms.Form):
     title = forms.CharField(label="Title:")
-    content = forms.CharField(label="Content:", widget=forms.Textarea)
+    content = forms.CharField(label="Content:", widget=forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Write in markdown(.md)', 'style': 'width: 95%; margin-bottom:10px;'}))
 
 def random_entry(request):
     all = util.list_entries()
@@ -21,13 +19,9 @@ def random_entry(request):
     rndm = random.choice(all)
     return redirect('entry', rndm.lower())  
 
-
-
-
-
 def change(request, title):
     if request.method == "POST":
-        form2 = NewTaskForm(request.POST)
+        form2 = NewArticleForm(request.POST)
 
         if form2.is_valid():
             title = form2.cleaned_data["title"]
@@ -42,14 +36,13 @@ def change(request, title):
 
     contenttoedit= util.get_entry(title)
     return render(request, "encyclopedia/changeentry.html", {
-        "form2": NewTaskForm(initial={'title': title, 'content': contenttoedit}),
+        "form2": NewArticleForm(initial={'title': title, 'content': contenttoedit}),
         "title": title.capitalize()
     })
 
-
 def add(request):
     if request.method == "POST":
-        form1 = NewTaskForm(request.POST)
+        form1 = NewArticleForm(request.POST)
 
         if form1.is_valid():
             title = form1.cleaned_data["title"]
@@ -62,9 +55,8 @@ def add(request):
             })
 
     return render(request, "encyclopedia/newPage.html", {
-        "form1": NewTaskForm()
+        "form1": NewArticleForm()
     })
-
 
 def search_redirect(request):
     search_term = request.GET.get('q', '')
